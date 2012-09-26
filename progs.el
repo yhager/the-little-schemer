@@ -78,7 +78,7 @@
 (defun multisubst (new old lat)
   (cond
    ((null lat) ())
-   ((eq old (car lat)) (cons new 
+   ((eq old (car lat)) (cons new
                              (multisubst new old (cdr lat))))
    (t (cons (car lat)
             (multisubst new old (cdr lat))))))
@@ -248,3 +248,117 @@
    (t (cons (car lat)
             (rempick (sub1 n) (cdr lat))))))
 (rempick 3 '(lemon meringue salty pie))
+
+(defun rember* (a l)
+  (cond
+   ((null l) ())
+   ((eqan? (car l) a) (rember* a (cdr l)))
+   ((atom? (car l))
+    (cons (car l)
+          (rember* a (cdr l))))
+   (t (cons (rember* a (car l))
+            (rember* a (cdr l))))))
+
+(rember* 'cup '((coffee) cup ((tea) cup) (and (hick)) cup))
+
+(defun insertR* (new old l)
+  (cond
+   ((null l) ())
+   ((atom? (car l))
+    (cond
+     ((eq (car l) old)
+      (cons old
+            (cons new (insertR* new old (cdr l)))))
+     (t (cons (car l)
+              (insertR* new old (cdr l))))))
+   (t (cons (insertR* new old (car l))
+            (insertR* new old (cdr l))))))
+
+(insertR* 'roast 'chuck '((how much (wood))
+                          could
+                          ((a (wood) chuck))
+                          (((chuck)))
+                          (if (a) ((wood chuck)))
+                          could chuck wood))
+
+(defun occur* (a l)
+  (cond
+   ((null l) 0)
+   ((atom? (car l))
+    (cond
+     ((eq (car l) a)
+      (add1 (occur* a (cdr l))))
+     (t (occur* a (cdr l)))))
+   (t (plus (occur* a (car l))
+            (occur* a (cdr l))))))
+
+(occur* 'banana '((banana)
+                  (split ((((banana ice)))
+                          (cream (banana))
+                          sherbet))
+                  (banana)
+                  (bread)
+                  (banana brandy)))
+
+(defun subst* (new old l)
+  (cond
+   ((null l) ())
+   ((atom? (car l))
+    (cond
+     ((eq (car l) old)
+      (cons new (subst* new old (cdr l))))
+     (t (cons (car l)
+              (subst* new old (cdr l))))))
+   (t (cons (subst* new old (car l))
+            (subst* new old (cdr l))))))
+
+(subst* 'orange 'banana '((banana)
+                          (split ((((banana ice)))
+                                  (cream (banana))
+                                  sherbet))
+                          (banana)
+                          (bread)
+                          (banana brandy)))
+
+(defun insertL* (new old l)
+  (cond
+   ((null l) ())
+   ((atom? (car l))
+    (cond
+     ((eq (car l) old)
+      (cons new
+            (cons old (insertL* new old (cdr l)))))
+     (t (cons (car l)
+              (insertL* new old (cdr l))))))
+   (t (cons (insertL* new old (car l))
+            (insertL* new old (cdr l))))))
+
+(insertL* 'pecker 'chuck '((how much (wood))
+                          could
+                          ((a (wood) chuck))
+                          (((chuck)))
+                          (if (a) ((wood chuck)))
+                          could chuck wood))
+
+(defun member* (a l)
+  (cond
+   ((null l) nil)
+   ((atom? (car l))
+    (or
+     (eq a (car l))
+     (member* a (cdr l))))
+   (t (or (member* a (car l))
+          (member* a (cdr l))))))
+
+(member* 'chips '((potato) (chips ((with) fish) (chips))))
+
+(defun leftmost (l)
+  (cond
+   ((atom? (car l)) (car l))
+   (t (leftmost (car l)))))
+
+(leftmost '((potato) (chips ((with) fish) (chips))))
+(leftmost '(((hot) (tuna (and))) cheese))
+(leftmost '(((() four)) 17 (seventeen)))
+(leftmost '())
+
